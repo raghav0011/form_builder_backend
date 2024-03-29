@@ -12,9 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     field_options: {
       type: DataTypes.STRING,
     },
-    field_order: {
-      type: DataTypes.STRING,
-    },
   });
   return FormField;
 };

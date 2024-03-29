@@ -1,6 +1,7 @@
-const db = require("../models");
-const Org = db.org;
-const Form = db.form;
+const { db } = require("../config/dbConfig");
+const { Form, FormField, Submission } = require("../config/dbConfig");
+// const { Submission } = require('../models/Submission');
+const Org = require("../models/Organization")(db.sequelize, db.DataTypes);
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -47,10 +48,17 @@ const orgLogin = async (req, res) => {
 
 const createForm = async (req, res) => {
   try {
-    const { org_id, form_name, field_type, field_label, field_options, field_order } = req.body;
+    const {
+      org_id,
+      form_name,
+      field_type,
+      field_label,
+      field_options,
+      field_order,
+    } = req.body;
 
     //Checking if the org is authorized or not
-    const org = await Org.findOne({ where: { org_id } });
+    const org = await Org.findOne({ where: { id: org_id } });
     if (!org) {
       return res.status(404).json({ message: "Organization not found" });
     }
@@ -60,13 +68,31 @@ const createForm = async (req, res) => {
       form_name,
     });
 
-     return res
-       .status(201)
-       .json({ message: "Form created successfully", form});
-  } catch (error) {
-     console.error("Error logging in:", error);
-     res.status(500).json({ message: "Server Error" });
-  }
-}
+    const formField = await FormField.create({
+      form_id: form.id,
+      field_type,
+      field_label,
+      field_options,
+    });
 
-module.exports = { registerOrg, orgLogin, createForm };
+    return res.status(201).json({ message: "Form created successfully", form });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getUserSubmission = async (req, res) => {
+  try {
+    // const forms = await Form.findAll({ include: FormField });
+    const forms = await Form.findAll({
+      include: [FormField, { model: Submission }],
+    });
+    res.status(201).json({ forms });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+module.exports = { registerOrg, orgLogin, createForm, getUserSubmission };

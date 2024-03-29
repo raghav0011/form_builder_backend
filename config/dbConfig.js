@@ -1,13 +1,29 @@
-module.exports = {
-  HOST: "localhost",
-  USER: "root",
-  PASSWORD: "R@ghavmessi10",
-  DB: "form_builder",
-  dialect: "mysql",
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-};
+require("dotenv").config();
+
+const { Sequelize, DataTypes } = require("sequelize");
+
+const sequelize = new Sequelize(process.env.DB, process.env.USER, process.env.PASSWORD, {
+  host: process.env.HOST,
+  dialect: process.env.dialect,
+  operatorsAliases: false,
+});
+
+const db = {};
+
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
+db.DataTypes = DataTypes
+
+const User = require("../models/User")(sequelize, DataTypes);
+const Org = require("../models/Organization")(sequelize, DataTypes);
+const Form = require('../models/Form')(sequelize, DataTypes);
+const FormField = require('../models/FormField')(sequelize, DataTypes);
+const Submission = require("../models/Submission")(sequelize, DataTypes);
+
+Form.hasMany(FormField, { foreignKey: 'form_id' });
+FormField.belongsTo(Form, { foreignKey: "form_id" });
+
+Form.hasMany(Submission, { foreignKey: "form_id" });
+Submission.belongsTo(Form, { foreignKey: "form_id" });
+
+module.exports = { db, Form, FormField, Submission };

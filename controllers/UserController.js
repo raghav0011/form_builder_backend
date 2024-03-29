@@ -1,6 +1,7 @@
-const db = require("../models");
-const User = db.user;
-const Form = db.form;
+// const db = require("../config/dbConfig");
+const { db, Form, FormField } = require("../config/dbConfig");
+const User = require("../models/User")(db.sequelize, db.DataTypes);
+const Submission = require("../models/Submission")(db.sequelize, db.DataTypes);
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -45,12 +46,38 @@ const userLogin = async (req, res) => {
   }
 };
 
-const getForm = async (req, res) => {
+const getForm = async (req,res) => {
   try {
-    
+    const forms = await Form.findAll({ include: FormField });
+    res.status(201).json({ forms });
   } catch (error) {
-    
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Server Error" });
   }
 }
 
-module.exports = { registerUser, userLogin };
+const postForm = async (req, res) => {
+  try {
+    const { user_id, form_id, user_data } = req.body;
+    const user = await User.findOne({ where: { id: user_id } });
+
+    //Checking If the user is valid or not
+    if (!user) {
+      return res.status(400).json({ message: "User Not Found" });
+    }
+
+    const submission = await Submission.create({
+      form_id,
+      user_id,
+      user_data
+    });
+
+    return res.status(201).json({ message: "Form Submitted successfully", submission });
+
+  } catch (error) {
+     console.error("Error logging in:", error);
+     res.status(500).json({ message: "Server Error" });
+  }
+}
+
+module.exports = { registerUser, userLogin, getForm, postForm };
