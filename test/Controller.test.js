@@ -1,5 +1,5 @@
 const request = require("supertest");
-const server = require("./testServer"); // Adjust the path if necessary
+const server = require("../server"); // Adjust the path if necessary
 
 describe("registerOrg", () => {
   test("registers a new organization if org doesn't exist", async () => {
