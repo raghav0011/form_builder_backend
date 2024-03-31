@@ -25,6 +25,8 @@ app.get("/", (req, res) => {
 app.use("/users", userRoutes);
 app.use("/org", orgRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000 || 2000;
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+module.exports = app; // Export the app object
