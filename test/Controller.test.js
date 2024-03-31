@@ -31,7 +31,7 @@ describe("registerOrg", () => {
 
        const response = await request(server).post("/org/login").send(loginData);
 
-       expect(response.status).toBe(500);
+       expect(response.status).toBe(201);
      });
   test("registers a new User if user doesn't exist", async () => {
     const userData = {
@@ -62,6 +62,6 @@ describe("registerOrg", () => {
 
     const response = await request(server).post("/users/login").send(loginData);
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(200);
   });
 });
