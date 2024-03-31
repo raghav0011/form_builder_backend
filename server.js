@@ -3,6 +3,7 @@ const {db} = require("./config/dbConfig");
 const app = express();
 const userRoutes = require("./routes/userRoutes");
 const orgRoutes = require("./routes/orgRoutes");
+const cors = require("cors");
 
 db.sequelize
   .sync()
@@ -12,6 +13,8 @@ db.sequelize
   .catch((err) => {
     console.log("Failed to sync db: " + err.message);
   });
+
+app.use(cors());
 
 app.use(express.json());
 

@@ -39,7 +39,7 @@ const userLogin = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, "12345678", {
       expiresIn: "1h",
     });
-    res.json({ token });
+    res.json({ user,token });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Server Error" });
@@ -49,7 +49,7 @@ const userLogin = async (req, res) => {
 const getForm = async (req,res) => {
   try {
     const forms = await Form.findAll({ include: FormField });
-    res.status(201).json({ forms });
+    res.status(200).json({ forms });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Server Error" });

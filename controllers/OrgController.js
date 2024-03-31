@@ -39,7 +39,7 @@ const orgLogin = async (req, res) => {
     const token = jwt.sign({ userId: org.id }, "12345678", {
       expiresIn: "1h",
     });
-    res.json({ token });
+    res.json({org, token });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Server Error" });
