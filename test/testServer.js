@@ -5,3 +5,7 @@ const server = app.listen(6000, () => {
 });
 
 module.exports = server;
+
+afterAll(async () => {
+  await server.close();
+});
