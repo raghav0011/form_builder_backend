@@ -24,12 +24,12 @@ describe("registerOrg", () => {
     }
   });
      test("logs in an existing organization", async () => {
-       const loginData = {
+       const loginOrg = {
          "email": "test",
          "password": "test",
        };
 
-       const response = await request(server).post("/org/login").send(loginData);
+       const response = await request(server).post("/org/login").send(loginOrg);
 
        expect(response.status).toBe(201);
      });
@@ -55,12 +55,12 @@ describe("registerOrg", () => {
     }
   });
   test("logs in an existing user", async () => {
-    const loginData = {
+    const loginUser = {
       email: "test",
       password: "test",
     };
 
-    const response = await request(server).post("/users/login").send(loginData);
+    const response = await request(server).post("/users/login").send(loginUser);
 
     expect(response.status).toBe(200);
   });
