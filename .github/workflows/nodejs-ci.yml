@@ -12,17 +12,37 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: R@ghavmessi10
+          MYSQL_DATABASE: form_builder
+          MYSQL_USER: root
+          MYSQL_PASSWORD: R@ghavmessi10
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     strategy:
       matrix:
         node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install
+
+      - name: Wait for MySQL to be ready
+        run: |
+          apt-get update && apt-get install -y mysql-client
+          until mysql -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h 127.0.0.1 -e "SELECT 1"; do sleep 1; done
+
+      - name: Install dependencies
         run: npm ci
-      - name: tests
+
+      - name: Tests
         run: npm test
