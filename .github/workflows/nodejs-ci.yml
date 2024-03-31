@@ -39,6 +39,10 @@ jobs:
           apt-get update && apt-get install -y mysql-client
           until mysql -uroot -p${{ secrets.MYSQL_ROOT_PASSWORD }} -h 127.0.0.1 -e "SELECT 1"; do sleep 1; done
 
+      - name: Configure Sequelize
+        run: |
+          echo "module.exports = { db: { host: 'localhost', database: 'form_builder', username: 'root', password: '${{ secrets.MYSQL_ROOT_PASSWORD }}', dialect: 'mysql' } }" > config/dbConfig.js
+
       - name: Install dependencies
         run: npm ci
 
